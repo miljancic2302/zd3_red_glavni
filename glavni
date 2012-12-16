@@ -1,0 +1,309 @@
+#include <iostream>
+#include <ctime>
+#include "red_polje.cpp"
+//#include "red_pokazivaci.cpp"
+using namespace std;
+cetvorka polje[1000];
+
+
+
+void generiranje(int n){
+     
+     srand(time(0));
+     int a=0,b=0;
+     for(int i=0;i<n;i++){
+             do{
+                 a=rand()%500+1;
+                 polje[i].a=a;
+                 
+             }while(a<=100 || a>=500);
+             do{
+                           
+                 b=rand()%500+1;
+                 polje[i].b=b;
+                 
+             }while(b<=100 || b>=500);
+                
+                 polje[i].c=rand()%6+1;
+                 polje[i].d=rand()%4+1;
+             }
+     
+    
+    
+     }
+banka trenutno[1000];  
+void upis(int n,red *red_1){
+      banka kljent;
+        
+     
+     for (int i=0;i<n;i++){
+         kljent.prioriteti=polje[i];
+         cout<<"kljent s prioritetom "<<kljent.prioriteti.c<<endl;
+                    if(kljent.prioriteti.c==1) cout<<"Umiruvljenik"<<endl;
+                    if(kljent.prioriteti.c==3) cout<<"Trudnica"<<endl;
+                    if(kljent.prioriteti.c==4) cout<<"VIP kljent"<<endl;
+                    if(kljent.prioriteti.c==2) cout<<"Invalid"<<endl;
+                    if(kljent.prioriteti.c==5) cout<<"Ostali kljent banke"<<endl;
+                    if(kljent.prioriteti.c==6) cout<<"Nije kljent banke"<<endl;
+                   
+                    cout<<"Vrsta transakcije je: "<<endl;
+                    if(kljent.prioriteti.d==1) cout<<"Uplata"<<endl;
+                    if(kljent.prioriteti.d==2) cout<<"Isplata"<<endl;
+                    if(kljent.prioriteti.d==3) cout<<"Placanje racuna"<<endl;
+                    if(kljent.prioriteti.d==4) cout<<"Krediti"<<endl;
+         cout<<"Unesite ime "<<i+1<<". kljenta: ";
+         cin>>kljent.ime;
+         cout<<"Unesite prezime kljenta: ";
+         cin>>kljent.prezime;
+         cout<<"Uensi stanje na deviznom (HRK): ";
+         cin>>kljent.stanje_devizni;
+         cout<<"Unesi stanje na tekucem (HRK): ";
+         cin>>kljent.stanje_tekuci;
+         cout<<"Unesite godinu rodjenja: "<<endl;
+         do{
+         cin>>kljent.g;}while(1900<kljent.g && kljent.g>2013);
+         
+         
+         EnQueueQ(kljent,red_1);
+       
+         cout<<"------------------------------"<<endl;
+     }
+     for(int i=0;i<n;i++){
+             trenutno[i]=FrontQ(red_1);
+             DeQueueQ(red_1);
+            
+     }
+     
+      for (int i=n; i>1;i--){
+          int Max=0;
+          for (int j=1;j<i;j++)
+          if (trenutno[j].prioriteti.c>trenutno[Max].prioriteti.c) Max=j;
+          banka pom=trenutno[i-1];
+          trenutno[i-1]=trenutno[Max];
+          trenutno[Max]=pom;
+      }
+      
+      for(int i=0;i<n;i++)
+              EnQueueQ(trenutno[i],red_1);
+              int ceka=0, napusta=0, broj=1, ulaz=0;
+              while(!IsEmptyQ(red_1)){
+                    kljent=FrontQ(red_1);
+                    cout<<"Na redu je :";
+                    cout<<" "<<broj<<". kljent s prioritetom "<<kljent.prioriteti.c<<endl;
+                    if(kljent.prioriteti.c==1) cout<<"Umiruvljenik"<<endl;
+                    if(kljent.prioriteti.c==3) cout<<"Trudnica"<<endl;
+                    if(kljent.prioriteti.c==4) cout<<"VIP kljent"<<endl;
+                    if(kljent.prioriteti.c==2) cout<<"Invalid"<<endl;
+                    if(kljent.prioriteti.c==5) cout<<"Ostali kljent banke"<<endl;
+                    if(kljent.prioriteti.c==6) cout<<"Nije kljent banke"<<endl;
+                    broj++;
+                    cout<<"Vrsta transakcije je: "<<endl;
+                    if(kljent.prioriteti.d==1) cout<<"Uplata"<<endl;
+                    if(kljent.prioriteti.d==2) cout<<"Isplata"<<endl;
+                    if(kljent.prioriteti.d==3) cout<<"Placanje racuna"<<endl;
+                    if(kljent.prioriteti.d==4) cout<<"Krediti"<<endl;
+                    cout<<"----------------------------------"<<endl;
+                    cout<<"Ime i prezime "<<kljent.ime <<" "<<kljent.prezime<<endl;
+                    cout<<"Stanje na tekucom racuno je "<<kljent.stanje_tekuci<<" HRK. "<<endl;
+                    cout<<"Stanje na deviznom racuno je "<<kljent.stanje_devizni<<" HRK. "<<endl;                    
+                    cout<<"U red je usao nakon: "<<ulaz<<" (jedinica vrem nakon prethodnog)"<<endl;
+                    cout<<"U redu je cekao: "<<ceka<<" (jedinica vrem.)"<<endl;
+                    ulaz+=kljent.prioriteti.a;
+                    napusta=ceka+kljent.prioriteti.b;
+                    ceka+=ceka+kljent.prioriteti.b;
+                    cout<<"Na salteru je bio: "<<kljent.prioriteti.b<<" (jedinica vrem.)"<<endl;
+                    cout<<"Banku napussta nakon: "<<napusta<<" (jedninica vrem.)"<<endl;
+                    cout<<"-----------------------------------\n\n";
+                    DeQueueQ(red_1);
+                    system("pause");
+              }
+      
+     for(int i=0;i<n;i++)
+              EnQueueQ(trenutno[i],red_1);
+     cout<<"Kljenti koji imaju na racuno vise od 10000 HRK !!"<<endl;
+     cout<<"-------------------------------------------------"<<endl;
+     while(!IsEmptyQ(red_1)){
+                              kljent=FrontQ(red_1);
+                              if((kljent.stanje_tekuci+kljent.stanje_devizni)>=10000){
+                                                    cout<<"Ime i prezime "<<kljent.ime <<" "<<kljent.prezime<<endl;
+                                                    cout<<"Stanje na tekuvom racuno je "<<kljent.stanje_tekuci<<" HRK. "<<endl;
+                                                    cout<<"Stanje na deviznom racuno je "<<kljent.stanje_devizni<<" HRK. "<<endl;  
+                                                    cout<<"Ukupno stanje na racuno je "<<kljent.stanje_tekuci+kljent.stanje_devizni<<" HRK "<<endl; 
+                                                    cout<<"Ukupno stanje na racuno je "<<(kljent.stanje_tekuci+kljent.stanje_devizni)/7.499<<" EUR "<<endl;      
+                                                       }
+                              DeQueueQ(red_1);
+                    
+                 }
+     for(int i=0;i<n;i++)
+              EnQueueQ(trenutno[i],red_1);
+    
+}
+void ispis_glavni(int n,red *redx){
+   
+     banka kljent;
+     while(!IsEmptyQ(redx)){
+                    kljent=FrontQ(redx);
+                    cout<<"  kljent ---> prioritet ("<<kljent.prioriteti.c<<")"<<endl;
+                    cout<<"----------------------------------"<<endl;
+                    cout<<"Ime i prezime "<<kljent.ime <<" "<<kljent.prezime<<endl;
+                    cout<<"Stanje na tekuvom racuno je "<<kljent.stanje_tekuci<<" HRK. "<<endl;
+                    cout<<"Stanje na deviznom racuno je "<<kljent.stanje_devizni<<" HRK. "<<endl;    
+                    cout<<"Vrsta transakcije je : "<<  kljent.prioriteti.d <<endl;             
+                    DeQueueQ(redx);
+
+              }
+     for(int i=0;i<n;i++)
+              EnQueueQ(trenutno[i],redx);
+     
+     }
+
+void red_brze_transakcije(int n,red *red_1){
+    
+    red *pomocni = new red;
+    InitQ(pomocni);
+    while(!IsEmptyQ(red_1)){
+    EnQueueQ(FrontQ(red_1), pomocni);
+    DeQueueQ(red_1);
+    }
+    cout<<"Brza_transakcija red-stanje u brzom redu: ";
+    cout<<endl<<endl;
+    while(!IsEmptyQ(pomocni)){
+    banka kljent =FrontQ(pomocni);
+    if(kljent.prioriteti.d==3){
+    cout<<endl<<"Ime i prezime klijenta: "<<kljent.ime<<" "<<kljent.prezime<<endl;
+    cout<<"Stanje na tekuvom racuno je "<<kljent.stanje_tekuci<<" HRK. "<<endl;
+    cout<<"Stanje na deviznom racuno je "<<kljent.stanje_devizni<<" HRK. "<<endl;    
+    cout<<"Vrsta transakcije je : "<<  kljent.prioriteti.d <<endl;  
+  
+    }
+    else
+    EnQueueQ(kljent,red_1);
+    DeQueueQ(pomocni);
+    }
+    delete pomocni;
+    cout<<"U glavnom resu su ostalo : "<<endl;
+    ispis_glavni(n,red_1);
+    for(int i=0;i<n;i++)
+              EnQueueQ(trenutno[i],red_1);
+}
+void brisanje(int n,red *red_1){
+
+        red *red_pomocni = new red;
+        InitQ(red_pomocni);
+        while(!IsEmptyQ(red_1)){
+            EnQueueQ(FrontQ(red_1), red_pomocni);
+            DeQueueQ(red_1);
+        }
+        cout<<"Izbaceni iz reda:"<<endl<<endl;
+        while(!IsEmptyQ(red_pomocni)){
+            banka kljent=FrontQ(red_pomocni);
+            if(( kljent.g>30 && kljent.prioriteti.c==3 && kljent.stanje_tekuci<100 && kljent.prioriteti.d==1) ||
+                (kljent.prioriteti.c==1 && kljent.stanje_tekuci>5000 && kljent.prioriteti.d==2)){
+                cout<<endl<<"Ime i prezime klijenta: "<<kljent.ime<<" "<<kljent.prezime<<endl;
+                cout<<"Stanje na tekuvom racuno je "<<kljent.stanje_tekuci<<" HRK. "<<endl;
+                cout<<"Stanje na deviznom racuno je "<<kljent.stanje_devizni<<" HRK. "<<endl;    
+                 cout<<"Vrsta transakcije je : "<<  kljent.prioriteti.d <<endl;      
+                
+            }
+        else
+        EnQueueQ(kljent,red_1);
+        DeQueueQ(red_pomocni);
+        }
+        delete red_pomocni;
+        
+        cout<<"Stanje nakon brisanja..."<<endl;
+        ispis_glavni(n,red_1);
+        for(int i=0;i<n;i++)
+              EnQueueQ(trenutno[i],red_1);
+         
+}
+int okreni(red *red_1, int br=0){
+    
+  banka pomocni_zapis = FrontQ(red_1);
+  DeQueueQ(red_1);
+
+	if(!IsEmptyQ(red_1)){
+		br=okreni(red_1, ++br);
+	}
+	EnQueueQ(pomocni_zapis,red_1);
+
+	return br;
+}
+     
+void otvori_novi_red(red *red_1, int broj){
+     if(IsEmptyQ(red_1))
+		return;
+
+	banka kljent=FrontQ(red_1);
+	DeQueueQ(red_1);
+	bool izbacen=false;
+	if(broj>0) {
+		izbacen=true;
+	    cout<<endl<<"Ime i prezime klijenta: "<<kljent.ime<<" "<<kljent.prezime<<endl;
+        cout<<"Stanje na tekuvom racuno je "<<kljent.stanje_tekuci<<" HRK. "<<endl;
+        cout<<"Stanje na deviznom racuno je "<<kljent.stanje_devizni<<" HRK. "<<endl;    
+        cout<<"Vrsta transakcije je : "<<  kljent.prioriteti.d <<endl;    
+		broj--;
+	}
+	otvori_novi_red(red_1, broj);
+    	if(izbacen==false)
+	    	EnQueueQ(kljent,red_1);
+}
+int main(){
+     red *red_1=new red;
+    InitQ(red_1);
+    
+    int izbor; 
+    int N;
+    do{
+        cout<<"Dobro dosli u simulaciju banke"<<endl;
+        cout<<"---------------------------------"<<endl;
+        cout<<"1.Unesite N, za generiranje N slucajno generirani cetvorki "<<endl;
+        cout<<"2.Pokretanje simulacije i ispis kljenata s stanjem na racuno vecim od 10000 kn"<<endl;
+        cout<<"3.Simulacija s redom brzih transakcija!"<<endl;
+        cout<<"4:ispis glavnog reda!"<<endl;
+        cout<<"5.Brisanje vip kljenata mladih od 30 koji vrse transakciju uplata i brisanje umirovljenika koji imaju viseo od 5000 kn "<<endl;
+        cout<<"6.Novi red"<<endl;
+        cout<<"9.Kraj!!"<<endl;
+        cout<<"---------------------------------"<<endl;
+        cin>>izbor;
+        
+    switch(izbor){
+                  case 1:system("cls"); 
+                       cout<<"Unesite broj N: ";
+                       cin>>N;
+                       generiranje(N);
+                       cout<<"Sada unesite 2 za pokretanje simulacije"<<endl;
+                       break;
+                  case 2:  
+                       upis(N,red_1);
+                      
+                       break; 
+                      case 3: 
+                           system("cls"); 
+                          red_brze_transakcije(N,red_1);
+                              break;  
+                  
+                case 4:system("cls"); 
+                     ispis_glavni(N,red_1);
+                         break;
+                case 5: 
+                     system("cls");
+                     brisanje(N,red_1);
+                     break;
+                case 6: 
+                     int b30;
+                     
+                    b30=okreni(red_1)*(30/100);
+	               	cout<<"Pomocni red "<<endl<<endl;
+		            otvori_novi_red(red_1, b30);
+		            cout<<"Glavni red"<<endl<<endl;
+	                ispis_glavni(N,red_1);
+                 
+    }
+      
+    }while(izbor !=9);
+    
+    
+    return 0;
+    }
